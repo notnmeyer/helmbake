@@ -111,6 +111,32 @@ func TestRunWithSetValues(t *testing.T) {
 	}
 }
 
+func TestRunWithPackage(t *testing.T) {
+	chartDir, baseValues, envValues := setupChart(t)
+	outputDir := t.TempDir()
+
+	err := Run(Options{
+		ChartPath:  chartDir,
+		ValueFiles: []string{baseValues, envValues},
+		OutputDir:  outputDir,
+		Package:    true,
+	})
+	if err != nil {
+		t.Fatalf("Run() error: %v", err)
+	}
+
+	// the .tgz should exist
+	matches, _ := filepath.Glob(filepath.Join(outputDir, "mychart-*.tgz"))
+	if len(matches) == 0 {
+		t.Fatal("expected a .tgz file in the output directory")
+	}
+
+	// the unpacked chart dir should have been cleaned up
+	if _, err := os.Stat(filepath.Join(outputDir, "mychart")); !os.IsNotExist(err) {
+		t.Error("expected unpacked chart directory to be removed after packaging")
+	}
+}
+
 func TestRunInvalidChart(t *testing.T) {
 	err := Run(Options{
 		ChartPath:  "/nonexistent",

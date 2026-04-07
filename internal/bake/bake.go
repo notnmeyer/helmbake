@@ -7,6 +7,7 @@ import (
 
 	"github.com/notnmeyer/helmbake/internal/merge"
 	"gopkg.in/yaml.v3"
+	"helm.sh/helm/v3/pkg/action"
 )
 
 type Options struct {
@@ -15,6 +16,7 @@ type Options struct {
 	OutputDir    string
 	SetValues    map[string]string
 	ChartVersion string
+	Package      bool
 }
 
 func Run(opts Options) error {
@@ -51,6 +53,22 @@ func Run(opts Options) error {
 		if err := setChartVersion(filepath.Join(outputChart, "Chart.yaml"), opts.ChartVersion); err != nil {
 			return fmt.Errorf("setting chart version: %w", err)
 		}
+	}
+
+	if opts.Package {
+		pkg := action.NewPackage()
+		pkg.Destination = opts.OutputDir
+		tgzPath, err := pkg.Run(outputChart, nil)
+		if err != nil {
+			return fmt.Errorf("packaging chart: %w", err)
+		}
+
+		if err := os.RemoveAll(outputChart); err != nil {
+			return fmt.Errorf("cleaning up unpacked chart: %w", err)
+		}
+
+		fmt.Printf("packaged chart: %s\n", tgzPath)
+		return nil
 	}
 
 	fmt.Printf("baked chart written to %s\n", outputChart)
