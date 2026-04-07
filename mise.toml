@@ -1,4 +1,5 @@
 [tools]
+bats = "latest"
 go = "latest"
 
 [tasks.test]
@@ -6,3 +7,6 @@ run = "go test ./... -cover"
 
 [tasks.build]
 run = "go build -o dist/ ."
+
+[tasks.integration]
+run = "bats tests/"

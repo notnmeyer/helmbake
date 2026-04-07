@@ -18,9 +18,9 @@ type Options struct {
 }
 
 func Run(opts Options) error {
-	chartYAML := filepath.Join(opts.ChartPath, "Chart.yaml")
-	if _, err := os.Stat(chartYAML); err != nil {
-		return fmt.Errorf("not a valid helm chart (missing Chart.yaml): %s", opts.ChartPath)
+	chartMeta, err := readChartYAML(filepath.Join(opts.ChartPath, "Chart.yaml"))
+	if err != nil {
+		return err
 	}
 
 	merged, err := merge.Files(opts.ValueFiles)
@@ -32,7 +32,7 @@ func Run(opts Options) error {
 		merge.SetPath(merged, k, v)
 	}
 
-	outputChart, err := copyChart(opts.ChartPath, opts.OutputDir)
+	outputChart, err := copyChart(opts.ChartPath, opts.OutputDir, chartMeta.Name)
 	if err != nil {
 		return fmt.Errorf("copying chart: %w", err)
 	}
@@ -78,8 +78,26 @@ func setChartVersion(chartYAMLPath, version string) error {
 	return os.WriteFile(chartYAMLPath, out, 0644)
 }
 
-func copyChart(chartPath, outputDir string) (string, error) {
-	chartName := filepath.Base(chartPath)
+type chartYAML struct {
+	Name string `yaml:"name"`
+}
+
+func readChartYAML(path string) (chartYAML, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return chartYAML{}, fmt.Errorf("not a valid helm chart (missing Chart.yaml): %s", path)
+	}
+	var meta chartYAML
+	if err := yaml.Unmarshal(data, &meta); err != nil {
+		return chartYAML{}, fmt.Errorf("parsing Chart.yaml: %w", err)
+	}
+	if meta.Name == "" {
+		return chartYAML{}, fmt.Errorf("Chart.yaml missing required 'name' field")
+	}
+	return meta, nil
+}
+
+func copyChart(chartPath, outputDir, chartName string) (string, error) {
 	dest := filepath.Join(outputDir, chartName)
 
 	if err := os.RemoveAll(dest); err != nil {
