@@ -1,0 +1,4 @@
+apiVersion: v2
+name: example
+version: 0.1.0
+description: a minimal chart for testing helmbake

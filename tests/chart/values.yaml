@@ -1,0 +1,5 @@
+docker:
+  registry: docker.io
+  image:
+    name: nginx
+    tag: latest

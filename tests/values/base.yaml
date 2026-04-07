@@ -1,0 +1,4 @@
+docker:
+  image:
+    name: myapp
+    tag: latest
