@@ -10,10 +10,11 @@ import (
 )
 
 type Options struct {
-	ChartPath  string
-	ValueFiles []string
-	OutputDir  string
-	SetValues  map[string]string
+	ChartPath    string
+	ValueFiles   []string
+	OutputDir    string
+	SetValues    map[string]string
+	ChartVersion string
 }
 
 func Run(opts Options) error {
@@ -46,8 +47,35 @@ func Run(opts Options) error {
 		return fmt.Errorf("writing values.yaml: %w", err)
 	}
 
+	if opts.ChartVersion != "" {
+		if err := setChartVersion(filepath.Join(outputChart, "Chart.yaml"), opts.ChartVersion); err != nil {
+			return fmt.Errorf("setting chart version: %w", err)
+		}
+	}
+
 	fmt.Printf("baked chart written to %s\n", outputChart)
 	return nil
+}
+
+func setChartVersion(chartYAMLPath, version string) error {
+	data, err := os.ReadFile(chartYAMLPath)
+	if err != nil {
+		return err
+	}
+
+	var chart map[string]any
+	if err := yaml.Unmarshal(data, &chart); err != nil {
+		return err
+	}
+
+	chart["version"] = version
+
+	out, err := yaml.Marshal(chart)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(chartYAMLPath, out, 0644)
 }
 
 func copyChart(chartPath, outputDir string) (string, error) {
