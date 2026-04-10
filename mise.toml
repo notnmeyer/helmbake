@@ -1,6 +1,6 @@
 [tools]
 bats = "latest"
-go = "latest"
+go = "1.26.2"
 goreleaser = "latest"
 
 [tasks.test]

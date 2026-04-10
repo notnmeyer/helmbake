@@ -33,7 +33,7 @@ This copies `mychart` to the current directory with a merged `values.yaml`. The 
 | `--values` | `-f` | Values files to merge, in order (required, repeatable) |
 | `--output` | `-o` | Output directory (default: current directory) |
 | `--set` | | Set individual values (`key=value`, supports dotted paths like `image.tag=v2`) |
-| `--chart-version` | | Override the chart version in Chart.yaml |
+| `--version` | | Override the chart version in Chart.yaml |
 | `--package` | | Package the baked chart into a `.tgz` archive |
 
 ### Examples
@@ -47,7 +47,7 @@ helmbake -c ./mychart -f base.yaml -f staging.yaml -o ./output
 Bake, override a value, and package into a `.tgz`:
 
 ```
-helmbake -c ./mychart -f base.yaml -f prod.yaml --set image.tag=v1.2.3 --chart-version 1.0.0 --package
+helmbake -c ./mychart -f base.yaml -f prod.yaml --set image.tag=v1.2.3 --version 1.0.0 --package
 ```
 
 Inspect a packaged chart without extracting it:

@@ -35,8 +35,8 @@ teardown() {
   [[ "$output" == *"registry: registry-staging"* ]]
 }
 
-@test "--chart-version overrides Chart.yaml version" {
-  run go run . -c tests/chart -f tests/values/base.yaml -o tests/output --chart-version 2.0.0
+@test "--version overrides Chart.yaml version" {
+  run go run . -c tests/chart -f tests/values/base.yaml -o tests/output --version 2.0.0
   [ "$status" -eq 0 ]
 
   run cat tests/output/example/Chart.yaml
