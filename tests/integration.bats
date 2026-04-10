@@ -43,6 +43,14 @@ teardown() {
   [[ "$output" == *"version: 2.0.0"* ]]
 }
 
+@test "--app-version overrides Chart.yaml appVersion" {
+  run go run . -c tests/chart -f tests/values/base.yaml -o tests/output --app-version 3.0.0
+  [ "$status" -eq 0 ]
+
+  run cat tests/output/example/Chart.yaml
+  [[ "$output" == *"appVersion: 3.0.0"* ]]
+}
+
 @test "fails on missing chart" {
   run go run . -c nonexistent -f tests/values/base.yaml -o tests/output
   [ "$status" -ne 0 ]

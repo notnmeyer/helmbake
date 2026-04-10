@@ -21,6 +21,7 @@ func main() {
 	rootCmd.Flags().StringP("output", "o", "", "output directory for the baked chart (default: current directory)")
 	rootCmd.Flags().StringSlice("set", nil, "set individual values (key=value)")
 	rootCmd.Flags().String("version", "", "override the chart version in Chart.yaml")
+	rootCmd.Flags().String("app-version", "", "override the appVersion in Chart.yaml")
 	rootCmd.Flags().Bool("package", false, "package the baked chart into a .tgz archive")
 	rootCmd.MarkFlagRequired("chart")
 	rootCmd.MarkFlagRequired("values")
@@ -37,6 +38,7 @@ func runBake(cmd *cobra.Command, args []string) error {
 	output, _ := cmd.Flags().GetString("output")
 	setVals, _ := cmd.Flags().GetStringSlice("set")
 	chartVersion, _ := cmd.Flags().GetString("version")
+	appVersion, _ := cmd.Flags().GetString("app-version")
 	pkg, _ := cmd.Flags().GetBool("package")
 
 	if output == "" {
@@ -54,6 +56,7 @@ func runBake(cmd *cobra.Command, args []string) error {
 		OutputDir:    output,
 		SetValues:    sets,
 		ChartVersion: chartVersion,
+		AppVersion:   appVersion,
 		Package:      pkg,
 	}
 

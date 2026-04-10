@@ -34,6 +34,7 @@ This copies `mychart` to the current directory with a merged `values.yaml`. The 
 | `--output` | `-o` | Output directory (default: current directory) |
 | `--set` | | Set individual values (`key=value`, supports dotted paths like `image.tag=v2`) |
 | `--version` | | Override the chart version in Chart.yaml |
+| `--app-version` | | Override the appVersion in Chart.yaml |
 | `--package` | | Package the baked chart into a `.tgz` archive |
 
 ### Examples

@@ -16,6 +16,7 @@ type Options struct {
 	OutputDir    string
 	SetValues    map[string]string
 	ChartVersion string
+	AppVersion   string
 	Package      bool
 }
 
@@ -50,8 +51,14 @@ func Run(opts Options) error {
 	}
 
 	if opts.ChartVersion != "" {
-		if err := setChartVersion(filepath.Join(outputChart, "Chart.yaml"), opts.ChartVersion); err != nil {
+		if err := setChartField(filepath.Join(outputChart, "Chart.yaml"), "version", opts.ChartVersion); err != nil {
 			return fmt.Errorf("setting chart version: %w", err)
+		}
+	}
+
+	if opts.AppVersion != "" {
+		if err := setChartField(filepath.Join(outputChart, "Chart.yaml"), "appVersion", opts.AppVersion); err != nil {
+			return fmt.Errorf("setting app version: %w", err)
 		}
 	}
 
@@ -75,7 +82,7 @@ func Run(opts Options) error {
 	return nil
 }
 
-func setChartVersion(chartYAMLPath, version string) error {
+func setChartField(chartYAMLPath, field, value string) error {
 	data, err := os.ReadFile(chartYAMLPath)
 	if err != nil {
 		return err
@@ -86,7 +93,7 @@ func setChartVersion(chartYAMLPath, version string) error {
 		return err
 	}
 
-	chart["version"] = version
+	chart[field] = value
 
 	out, err := yaml.Marshal(chart)
 	if err != nil {
