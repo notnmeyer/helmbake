@@ -24,4 +24,7 @@ usage = '''
   arg "<tag>" help="release tag"
 '''
 confirm = "Are you sure you want to release helmbake {{ usage.tag }}?"
-run = ["git tag $1", "git push origin $1"]
+run = [
+  "git tag {{ usage.tag }}",
+  "git push origin {{ usage.tag }}",
+]
