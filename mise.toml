@@ -14,3 +14,14 @@ run = "bats tests/"
 
 [tasks."release:local"]
 run = "goreleaser release --snapshot --clean --skip=publish"
+
+[tasks."release:check"]
+run = "goreleaser check"
+
+[tasks.release]
+depends = ["release:check"]
+usage = '''
+  arg "<tag>" help="release tag"
+'''
+confirm = "Are you sure you want to release helmbake {{ usage.tag }}?"
+run = ["git tag $1", "git push origin $1"]
