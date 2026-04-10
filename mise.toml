@@ -1,6 +1,7 @@
 [tools]
 bats = "latest"
 go = "latest"
+goreleaser = "latest"
 
 [tasks.test]
 run = "go test ./... -cover"
@@ -10,3 +11,6 @@ run = "go build -o dist/ ."
 
 [tasks.integration]
 run = "bats tests/"
+
+[tasks."release:local"]
+run = "goreleaser release --snapshot --clean --skip=publish"
