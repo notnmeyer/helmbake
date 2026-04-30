@@ -1,0 +1,11 @@
+name: bake
+version: "0.2.0"
+usage: "package a helm chart with merged default values"
+description: |
+  helmbake packages a helm chart, merging values into the chart's
+  default values.yaml. it accepts --set and --values options that
+  work like their counterparts on `helm upgrade`.
+command: "$HELM_PLUGIN_DIR/bin/helmbake"
+hooks:
+  install: "scripts/install-plugin.sh"
+  update: "scripts/install-plugin.sh"

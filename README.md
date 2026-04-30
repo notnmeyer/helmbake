@@ -1,17 +1,37 @@
 # helmbake
 
-helmbake produces deployment-ready Helm charts by merging multiple values files into a single `values.yaml`. Instead of passing `-f base.yaml -f prod.yaml` at deploy time, you bake those overrides into the chart itself.
+helmbake packages a Helm chart with a known set of values merged into the chart's default `values.yaml`. Its `--set` and `--values` flags work like their counterparts on `helm upgrade` — install- and upgrade-time overrides still apply on top of the baked defaults.
 
 ## Why
 
-Helm's built-in values merging (`helm install -f a.yaml -f b.yaml`) happens at install time. This works, but it means your deploy tooling needs to know which files to pass and in what order. helmbake shifts that merge to build time, producing a self-contained chart that can be installed with no extra flags.
+Helm's built-in values merging (`helm install -f a.yaml -f b.yaml`) happens at install time. That works, but it means your deploy tooling needs to know which files to pass and in what order. helmbake shifts that merge to build time, producing a chart whose defaults already reflect the values you know about — env, region, customer, etc.
 
 This is useful when:
 - You want to publish pre-configured chart variants (one per environment, region, customer, etc.)
 - Your deploy pipeline shouldn't need to know about values layering
-- You want to inspect the final merged values before deploying
+- You want to inspect the final merged defaults before deploying
 
 ## Install
+
+As a Helm plugin (recommended):
+
+```
+helm plugin install https://github.com/notnmeyer/helmbake
+```
+
+Pin to a specific version with `--version`:
+
+```
+helm plugin install https://github.com/notnmeyer/helmbake --version v0.2.0
+```
+
+Then invoke as `helm bake`:
+
+```
+helm bake -c ./mychart -f base.yaml -f prod.yaml
+```
+
+As a standalone binary:
 
 ```
 go install github.com/notnmeyer/helmbake@latest

@@ -10,8 +10,13 @@ import (
 )
 
 func main() {
+	use := "helmbake"
+	if name := os.Getenv("HELM_PLUGIN_NAME"); name != "" {
+		use = "helm " + name
+	}
+
 	rootCmd := &cobra.Command{
-		Use:   "helmbake",
+		Use:   use,
 		Short: "bake helm charts by merging values files into a single default",
 		RunE:  runBake,
 	}

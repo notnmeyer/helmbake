@@ -2,12 +2,32 @@
 bats = "latest"
 go = "1.26.2"
 goreleaser = "latest"
+yq = "latest"
 
 [tasks.test]
 run = "go test ./... -cover"
 
 [tasks.build]
 run = "go build -o dist/ ."
+
+[tasks."install:local"]
+depends = ["build"]
+description = "install helmbake as a helm plugin from the local build"
+run = '''
+  set -e
+  helm_plugins="$(helm env HELM_PLUGINS)"
+  if [ -z "$helm_plugins" ]; then
+    echo "could not determine HELM_PLUGINS dir" >&2
+    exit 1
+  fi
+  plugin_dir="$helm_plugins/helmbake"
+  mkdir -p "$plugin_dir/bin"
+  cp -f plugin.yaml "$plugin_dir/plugin.yaml"
+  cp -f dist/helmbake "$plugin_dir/bin/helmbake"
+  chmod +x "$plugin_dir/bin/helmbake"
+  echo "installed to $plugin_dir"
+  echo "try: helm bake --help"
+'''
 
 [tasks.integration]
 run = "bats tests/"
@@ -20,11 +40,17 @@ run = "goreleaser check"
 
 [tasks.release]
 depends = ["release:check"]
-usage = '''
-  arg "<tag>" help="release tag"
+description = "tag and push using plugin.yaml's version (from HEAD)"
+run = '''
+  set -e
+  version=$(git show HEAD:plugin.yaml | yq .version)
+  if [ -z "$version" ]; then
+    echo "could not read version from plugin.yaml at HEAD" >&2
+    exit 1
+  fi
+  tag="v$version"
+  echo "tagging and pushing $tag"
+  git fetch --tags
+  git tag "$tag"
+  git push origin HEAD "$tag"
 '''
-confirm = "Are you sure you want to release helmbake {{ usage.tag }}?"
-run = [
-  "git tag {{ usage.tag }}",
-  "git push origin {{ usage.tag }}",
-]
