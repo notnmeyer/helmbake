@@ -1,5 +1,5 @@
 name: bake
-version: "0.1.0"
+version: "0.2.0"
 usage: "package a helm chart with merged default values"
 description: |
   helmbake packages a helm chart, merging values into the chart's
