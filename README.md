@@ -19,6 +19,12 @@ As a Helm plugin (recommended):
 helm plugin install https://github.com/notnmeyer/helmbake
 ```
 
+Pin to a specific version with `--version`:
+
+```
+helm plugin install https://github.com/notnmeyer/helmbake --version v0.2.0
+```
+
 Then invoke as `helm bake`:
 
 ```
