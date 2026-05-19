@@ -7,5 +7,5 @@ description: |
   work like their counterparts on `helm upgrade`.
 command: "$HELM_PLUGIN_DIR/bin/helmbake"
 hooks:
-  install: "scripts/install-plugin.sh"
-  update: "scripts/install-plugin.sh"
+  install: "$HELM_PLUGIN_DIR/scripts/install-plugin.sh"
+  update: "$HELM_PLUGIN_DIR/scripts/install-plugin.sh"
